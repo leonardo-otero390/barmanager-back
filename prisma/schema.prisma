@@ -82,9 +82,9 @@ model Cost {
 model Customer {
   id         Int      @id @default(autoincrement())
   name       String   @db.VarChar(255)
-  customerId Int
   email      String   @unique @db.VarChar(255)
-  phone      String   @db.VarChar(11)
+  phone      String?   @db.VarChar(11)
+  password   String   @db.VarChar(255)
   budgets    Budget[]
 
   @@map("customers")

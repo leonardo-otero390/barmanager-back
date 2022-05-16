@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { httpErrors } from '../errors/HttpError.js';
-import * as userService from '../services/userService.js';
+import * as customerService from '../services/customerService.js';
 
 dotenv.config();
 
@@ -25,7 +25,7 @@ export default async function validateToken(
     const { userId } = jwt.verify(token, process.env.JWT_SECRET) as {
       userId: number;
     };
-    const user = await userService.findById(userId);
+    const user = await customerService.findById(userId);
     res.locals.user = user;
 
     next();
