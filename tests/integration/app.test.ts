@@ -3,22 +3,35 @@ import app from '../../src/app.js';
 import { client } from '../../src/database.js';
 import * as customerFactory from '../factories/customerFactory.js';
 
-describe('Integration Tests', () => {
-  describe('POST /sign-up', () => {
-    beforeEach(async () => {
-      await client.$executeRaw`TRUNCATE TABLE customers CASCADE;`;
+beforeEach(async () => {
+  await client.$executeRaw`TRUNCATE TABLE customers CASCADE;`;
+});
+
+describe('POST /sign-up', () => {
+  it('should persist the customer given a valid body', async () => {
+    const customer = customerFactory.generateCustomer();
+
+    const response = await supertest(app).post('/sign-up').send(customer);
+    const createdUser = await client.customer.findUnique({
+      where: { email: customer.email },
     });
 
-    it('should persist the user given a valid body', async () => {
-      const customer = customerFactory.generateCustomer();
+    expect(response.status).toEqual(201);
+    expect(createdUser).not.toBeNull();
+  });
+});
 
-      const response = await supertest(app).post('/sign-up').send(customer);
-      const createdUser = await client.customer.findUnique({
-        where: { email: customer.email },
-      });
+describe('POST /log-in', () => {
+  it('should return a valid token given a valid body', async () => {
+    const customer = customerFactory.generateCustomer();
+    await customerFactory.insertCustomer(customer);
 
-      expect(response.status).toEqual(201);
-      expect(createdUser).not.toBeNull();
+    const response = await supertest(app).post('/log-in').send({
+      email: customer.email,
+      password: customer.password,
     });
+
+    expect(response.status).toEqual(200);
+    expect(response.body).toHaveProperty('token');
   });
 });

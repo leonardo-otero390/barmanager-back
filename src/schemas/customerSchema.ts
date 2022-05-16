@@ -6,3 +6,8 @@ export const signUp = Joi.object({
   phone: Joi.string().length(11),
   password: Joi.string().required(),
 });
+
+export const logIn = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+});
