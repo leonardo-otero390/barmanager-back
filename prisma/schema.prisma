@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Budget {
+  id         Int      @id @default(autoincrement())
+  guests     Int
+  customerId Int
+  categoryId Int?
+  customers  Customer @relation(fields: [customerId], references: [id])
+
+  BudgetCocktail BudgetCocktail[]
+  @@map("budgets")
+}
+
+model BudgetCocktail {
+  id         Int      @id @default(autoincrement())
+  budgetId   Int
+  budgets    Budget   @relation(fields: [budgetId], references: [id])
+  cocktailId Int
+  cocktails  Cocktail @relation(fields: [cocktailId], references: [id])
+  quantity   Int
+
+  @@map("budgets_cocktails")
+}
+
+model CocktailDisposable {
+  id           Int        @id @default(autoincrement())
+  disposableId Int
+  cocktailId   Int
+  cocktails    Cocktail   @relation(fields: [cocktailId], references: [id])
+  disposable   Disposable @relation(fields: [disposableId], references: [id])
+
+  @@map("cocktailDisposables")
+}
+
+model CocktailDrink {
+  id         Int      @id @default(autoincrement())
+  drinkId    Int
+  cocktailId Int
+  cocktails  Cocktail @relation(fields: [cocktailId], references: [id])
+  drinks     Drink    @relation(fields: [drinkId], references: [id])
+
+  @@map("cocktailDrinks")
+}
+
+model CocktailInput {
+  id         Int      @id @default(autoincrement())
+  inputId    Int
+  cocktailId Int
+  cocktails  Cocktail @relation(fields: [cocktailId], references: [id])
+  inputs     Input    @relation(fields: [inputId], references: [id])
+
+  @@map("cocktailInputs")
+}
+
+model Cocktail {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique @db.VarChar(255)
+  cocktailDisposable CocktailDisposable[]
+  cocktailDrinks     CocktailDrink[]
+  cocktailInputs     CocktailInput[]
+
+  BudgetCocktail BudgetCocktail[]
+  @@map("cocktails")
+}
+
+model Cost {
+  id       Int             @id @default(autoincrement())
+  name     String          @unique @db.VarChar(255)
+  price    Int
+  category CostsCategories
+
+  @@map("costs")
+}
+
+model Customer {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(255)
+  customerId Int
+  email      String   @unique @db.VarChar(255)
+  phone      String   @db.VarChar(11)
+  budgets    Budget[]
+
+  @@map("customers")
+}
+
+model Disposable {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique @db.VarChar(255)
+  price              Int
+  cocktailDisposable CocktailDisposable[]
+
+  @@map("disposables")
+}
+
+model Drink {
+  id             Int             @id @default(autoincrement())
+  name           String          @unique @db.VarChar(255)
+  price          Int
+  volume         Int
+  alcoholic      Boolean
+  cocktailDrinks CocktailDrink[]
+
+  @@map("drinks")
+}
+
+model Input {
+  id             Int             @id @default(autoincrement())
+  name           String          @unique @db.VarChar(255)
+  price          Int
+  measurement    Measurement
+  cocktailInputs CocktailInput[]
+
+  @@map("inputs")
+}
+
+enum Measurement {
+  ml
+  g
+  unit
+}
+
+enum CostsCategories {
+  staff
+  variable
+  operationals
+}
