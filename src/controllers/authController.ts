@@ -6,3 +6,9 @@ export async function signUp(req: Request, res: Response) {
 
   res.sendStatus(201);
 }
+
+export async function logIn(req: Request, res: Response) {
+  const token = await customerService.logIn(req.body);
+
+  res.send(token);
+}
