@@ -113,7 +113,7 @@ model Drink {
 model Input {
   id             Int             @id @default(autoincrement())
   name           String          @unique @db.VarChar(255)
-  price          Int
+  price          Decimal
   measurement    Measurement
   cocktailInputs CocktailInput[]
 
@@ -123,6 +123,7 @@ model Input {
 enum Measurement {
   ml
   g
+  kg
   unit
 }
 
