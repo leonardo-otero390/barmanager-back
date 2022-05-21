@@ -6,10 +6,12 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint . --ext .ts",
-    "start": "npx ts-node src/server.ts",
+    "start": "npx prisma migrate dev && npx ts-node src/server.ts",
     "dev": "nodemon src/server.ts",
     "test": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test jest -i",
-    "test:migrations": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test npx prisma migrate dev"
+    "migrate:start": "npx prisma migrate dev && npm run start",
+    "migrate:test": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test npx prisma migrate dev && npm run test"
+
   },
   "prisma": {
     "seed": "ts-node prisma/seeds/index.ts"

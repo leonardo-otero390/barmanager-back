@@ -1,29 +1,27 @@
 version: "3"
 services:
-  banco:
+  database:
     image: postgres
-    container_name: banco
+    container_name: database
+    restart: always
     ports:
       - 2345:5432
     env_file:
       - .env
     volumes:
-      - volume_banco:/var/lib/postgresql/data
+      - pg:/var/lib/postgresql/data
 
-  app_node:
+  barmanager:
+    container_name: barmanager
     build: .
-    container_name: app_node
     ports:
       - 5000:5000
     env_file:
       - .env
-    volumes:
-      - .:/usr/src
-      - /usr/src/node_modules
-    entrypoint: dockerize -wait tcp://banco:5432 -timeout 20s docker-entrypoint.sh
-    command: "npm run dev"
     depends_on:
-      - banco
+      - database
+    entrypoint: dockerize -wait tcp://database:5432 -timeout 20s docker-entrypoint.sh
+    command: npm run migrate:start
 
 volumes:
-  volume_banco:
+  pg:
