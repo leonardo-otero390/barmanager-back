@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import validateToken from '../middlewares/validateToken.js';
 import authRouter from './authRouter.js';
 import cocktailRouter from './cocktailsRouter.js';
 
@@ -12,7 +11,5 @@ routes.get('/health', async (req, res) => {
 routes.use(authRouter);
 
 routes.use('/cocktails', cocktailRouter);
-
-routes.use(validateToken);
 
 export default routes;
