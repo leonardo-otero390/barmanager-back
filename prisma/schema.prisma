@@ -7,15 +7,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Measurement {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique
+  category           MeasurementCategory
+  Disposable         Disposable[]
+  Input              Input[]
+  CocktailDisposable CocktailDisposable[]
+  CocktailDrink      CocktailDrink[]
+  CocktailInput      CocktailInput[]
+}
+
+model EventCategory {
+  id     Int      @id @default(autoincrement())
+  name   String   @unique
+  Budget Budget[]
+}
+
 model Budget {
-  id         Int      @id @default(autoincrement())
+  id         Int           @id @default(autoincrement())
   guests     Int
   customerId Int
-  categoryId Int?
-  customers  Customer @relation(fields: [customerId], references: [id])
+  categoryId Int
+  customers  Customer      @relation(fields: [customerId], references: [id])
+  categories EventCategory @relation(fields: [categoryId], references: [id])
 
   BudgetCocktail BudgetCocktail[]
+  BudgetCost     BudgetCost[]
   @@map("budgets")
+}
+
+model BudgetCost {
+  id       Int    @id @default(autoincrement())
+  budgetId Int
+  costId   Int
+  budgets  Budget @relation(fields: [budgetId], references: [id])
+  costs    Cost   @relation(fields: [costId], references: [id])
+
+  @@map("budget_costs")
 }
 
 model BudgetCocktail {
@@ -30,31 +59,40 @@ model BudgetCocktail {
 }
 
 model CocktailDisposable {
-  id           Int        @id @default(autoincrement())
-  disposableId Int
-  cocktailId   Int
-  cocktails    Cocktail   @relation(fields: [cocktailId], references: [id])
-  disposable   Disposable @relation(fields: [disposableId], references: [id])
+  id            Int         @id @default(autoincrement())
+  disposableId  Int
+  cocktailId    Int
+  quantity      Int
+  measurementId Int
+  measurements  Measurement @relation(fields: [measurementId], references: [id])
+  cocktails     Cocktail    @relation(fields: [cocktailId], references: [id])
+  disposable    Disposable  @relation(fields: [disposableId], references: [id])
 
   @@map("cocktailDisposables")
 }
 
 model CocktailDrink {
-  id         Int      @id @default(autoincrement())
-  drinkId    Int
-  cocktailId Int
-  cocktails  Cocktail @relation(fields: [cocktailId], references: [id])
-  drinks     Drink    @relation(fields: [drinkId], references: [id])
+  id            Int         @id @default(autoincrement())
+  drinkId       Int
+  cocktailId    Int
+  quantity      Int
+  measurementId Int
+  measurements  Measurement @relation(fields: [measurementId], references: [id])
+  cocktails     Cocktail    @relation(fields: [cocktailId], references: [id])
+  drinks        Drink       @relation(fields: [drinkId], references: [id])
 
   @@map("cocktailDrinks")
 }
 
 model CocktailInput {
-  id         Int      @id @default(autoincrement())
-  inputId    Int
-  cocktailId Int
-  cocktails  Cocktail @relation(fields: [cocktailId], references: [id])
-  inputs     Input    @relation(fields: [inputId], references: [id])
+  id            Int         @id @default(autoincrement())
+  inputId       Int
+  cocktailId    Int
+  quantity      Int
+  measurementId Int
+  measurements  Measurement @relation(fields: [measurementId], references: [id])
+  cocktails     Cocktail    @relation(fields: [cocktailId], references: [id])
+  inputs        Input       @relation(fields: [inputId], references: [id])
 
   @@map("cocktailInputs")
 }
@@ -76,16 +114,17 @@ model Cost {
   price    Int
   category CostsCategories
 
+  BudgetCost BudgetCost[]
   @@map("costs")
 }
 
 model Customer {
-  id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(255)
-  email      String   @unique @db.VarChar(255)
-  phone      String?   @db.VarChar(11)
-  password   String   @db.VarChar(255)
-  budgets    Budget[]
+  id       Int      @id @default(autoincrement())
+  name     String   @db.VarChar(255)
+  email    String   @unique @db.VarChar(255)
+  phone    String?  @db.VarChar(11)
+  password String   @db.VarChar(255)
+  budgets  Budget[]
 
   @@map("customers")
 }
@@ -94,6 +133,8 @@ model Disposable {
   id                 Int                  @id @default(autoincrement())
   name               String               @unique @db.VarChar(255)
   price              Int
+  measurementId      Int
+  measurement        Measurement          @relation(fields: [measurementId], references: [id])
   cocktailDisposable CocktailDisposable[]
 
   @@map("disposables")
@@ -103,7 +144,6 @@ model Drink {
   id             Int             @id @default(autoincrement())
   name           String          @unique @db.VarChar(255)
   price          Int
-  volume         Int
   alcoholic      Boolean
   cocktailDrinks CocktailDrink[]
 
@@ -114,16 +154,16 @@ model Input {
   id             Int             @id @default(autoincrement())
   name           String          @unique @db.VarChar(255)
   price          Decimal
-  measurement    Measurement
+  measurement    Measurement     @relation(fields: [measurementId], references: [id])
   cocktailInputs CocktailInput[]
 
+  measurementId Int
   @@map("inputs")
 }
 
-enum Measurement {
-  ml
-  g
-  kg
+enum MeasurementCategory {
+  mass
+  volume
   unit
 }
 
