@@ -1,0 +1,21 @@
+version: "3"
+services:
+  database:
+    image: postgres
+    container_name: database
+    ports:
+      - 2345:5432
+    env_file:
+      - .env
+
+  barmanager_test:
+    build: .
+    container_name: barmanager_test
+    ports:
+      - 5000:5000
+    env_file:
+      - .env
+    entrypoint: dockerize -wait tcp://database:5432 -timeout 20s docker-entrypoint.sh
+    command: "npm run migrate:test"
+    depends_on:
+      - database

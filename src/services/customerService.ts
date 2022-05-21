@@ -27,11 +27,11 @@ export async function findById(id: number) {
 }
 
 export async function logIn(data: CustomerLogin) {
-  const { password, id } = await customerRepository.findByEmail(data.email);
-  if (!password) {
+  const user = await customerRepository.findByEmail(data.email);
+  if (!user) {
     throw httpErrors.unauthorized('Email or password is incorrect');
   }
-
+  const { password, id } = user;
   const isValidPassword = bcrypt.compareSync(data.password, password);
   if (!isValidPassword) {
     throw httpErrors.unauthorized('Email or password is incorrect');
