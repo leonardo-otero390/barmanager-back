@@ -3,6 +3,7 @@ services:
   database:
     image: postgres
     container_name: database
+    restart: always
     ports:
       - 2345:5432
     env_file:
@@ -11,8 +12,8 @@ services:
       - pg:/var/lib/postgresql/data
 
   barmanager_dev:
-    build: .
     container_name: barmanager_dev
+    build: .
     ports:
       - 5000:5000
     env_file:
