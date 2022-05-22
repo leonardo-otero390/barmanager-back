@@ -2,9 +2,14 @@ import supertest from 'supertest';
 import app from '../../src/app.js';
 import { client } from '../../src/database.js';
 import * as customerFactory from '../factories/customerFactory.js';
+import * as databaseUtil from '../util/database.js';
 
 beforeEach(async () => {
-  await client.$executeRaw`TRUNCATE TABLE customers CASCADE;`;
+  await databaseUtil.clearCustomers();
+});
+
+afterAll(async () => {
+  await client.$disconnect();
 });
 
 describe('POST /sign-up', () => {
@@ -33,5 +38,16 @@ describe('POST /log-in', () => {
 
     expect(response.status).toEqual(200);
     expect(response.body).toHaveProperty('token');
+  });
+});
+
+describe('GET /cocktails', () => {
+  beforeAll(async () => {
+    await databaseUtil.seed();
+  });
+  it('should return a list of cocktails', async () => {
+    const response = await supertest(app).get('/cocktails');
+    expect(response.status).toEqual(200);
+    expect(response.body[0]).toHaveProperty('name');
   });
 });

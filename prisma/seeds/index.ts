@@ -6,7 +6,7 @@ import { upsertDrinks } from './populateDrinks.js';
 import { upsertInputs } from './populateInputs.js';
 import { upsertMeasurement } from './populateMeasurement.js';
 
-async function main() {
+export default async function main() {
   await upsertMeasurement();
   await upsertDrinks();
   await upsertInputs();
