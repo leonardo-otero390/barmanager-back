@@ -13,6 +13,6 @@ routes.use(authRouter);
 
 routes.use('/cocktails', cocktailRouter);
 
-routes.use('/budget', budgetRouter);
+routes.use('/budgets', budgetRouter);
 
 export default routes;
