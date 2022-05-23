@@ -11,6 +11,7 @@ export async function upsertMeasurement() {
       name: 'grama',
       category: 'mass',
     },
+    { name: 'litro', category: 'volume' },
     {
       name: 'mililitro',
       category: 'volume',

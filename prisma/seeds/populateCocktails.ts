@@ -1,109 +1,85 @@
-import {
-  Cocktail,
-  CocktailDisposable,
-  CocktailDrink,
-  CocktailInput,
-  Measurement,
-} from '@prisma/client';
+import { Cocktail, CocktailInput } from '@prisma/client';
 import { client } from '../../src/database.js';
+import { upsertInputs } from './populateInputs.js';
+
+export async function buildRecipes(
+  cocktails: Cocktail[],
+  inputs: any,
+  measurements: any
+) {
+  const recipesInputs: Omit<CocktailInput, 'id'>[] = [];
+
+  cocktails.forEach((cocktail) => {
+    const newItems: Omit<CocktailInput, 'id'>[] = [
+      {
+        cocktailId: cocktail.id,
+        inputId: inputs['Açucar'],
+        quantity: 30,
+        measurementId: measurements.grama,
+      },
+      {
+        cocktailId: cocktail.id,
+        inputId: inputs['Limão Taiti'],
+        quantity: 100,
+        measurementId: measurements.grama,
+      },
+      {
+        cocktailId: cocktail.id,
+        inputId: inputs.Gelo,
+        quantity: 300,
+        measurementId: measurements.grama,
+      },
+    ];
+    recipesInputs.push(...newItems);
+  });
+
+  recipesInputs.push(
+    {
+      cocktailId: cocktails.find((c) => c.name === 'Caipirinha tradicional').id,
+      inputId: inputs['Cachaça'],
+      quantity: 50,
+      measurementId: measurements.mililitro,
+    },
+    {
+      cocktailId: cocktails.find((c) => c.name === 'Caipiroska').id,
+      inputId: inputs.Vodka,
+      quantity: 50,
+      measurementId: measurements.mililitro,
+    }
+  );
+  await client.cocktailInput.createMany({ data: recipesInputs });
+}
 
 export async function upsertCocktailsInput(
-  measurements: Measurement[],
+  measurements: any,
   cocktails: Cocktail[]
 ) {
-  const unitId = measurements.find((m) => m.name === 'grama').id;
-
-  const inputs = await client.input.findMany();
-
-  const cocktailInputs: Omit<CocktailInput, 'id'>[] = [];
-
-  inputs.forEach((input) => {
-    cocktails.forEach((cocktail) => {
-      cocktailInputs.push({
-        cocktailId: cocktail.id,
-        inputId: input.id,
-        quantity: Math.floor(Math.random() * 100),
-        measurementId: unitId,
-      });
-    });
+  const inputs = await upsertInputs();
+  const inputHash: any = {};
+  inputs.forEach((i) => {
+    inputHash[i.name] = i.id;
   });
 
-  await client.cocktailInput.createMany({ data: cocktailInputs });
-}
-
-export async function upsertCocktailsDisposable(
-  measurements: Measurement[],
-  cocktails: Cocktail[]
-) {
-  const unitId = measurements.find((m) => m.name === 'unidade').id;
-
-  const disposables = await client.disposable.findMany();
-
-  const cocktailDisposables: Omit<CocktailDisposable, 'id'>[] = [];
-
-  disposables.forEach((disposable) => {
-    cocktails.forEach((cocktail) => {
-      cocktailDisposables.push({
-        cocktailId: cocktail.id,
-        disposableId: disposable.id,
-        quantity: Math.floor(Math.random() * 100),
-        measurementId: unitId,
-      });
-    });
-  });
-
-  await client.cocktailDisposable.createMany({ data: cocktailDisposables });
-}
-
-export async function upsertCocktailsDrink(
-  measurements: Measurement[],
-  cocktails: Cocktail[]
-) {
-  const mililiterId = measurements.find((m) => m.name === 'mililitro').id;
-
-  const drinks = await client.drink.findMany();
-
-  const cocktailDrink: Omit<CocktailDrink, 'id'>[] = [
-    {
-      drinkId: drinks[0].id,
-      cocktailId: cocktails[0].id,
-      quantity: 50,
-      measurementId: mililiterId,
-    },
-    {
-      drinkId: drinks[1].id,
-      cocktailId: cocktails[1].id,
-      quantity: 50,
-      measurementId: mililiterId,
-    },
-  ];
-
-  await client.cocktailDrink.createMany({ data: cocktailDrink });
+  await buildRecipes(cocktails, inputHash, measurements);
 }
 
 export async function upsertCocktails() {
-  const cocktails: Omit<Cocktail, 'id'>[] = [
-    {
-      name: 'Caipirinha tradicional',
-    },
-    {
-      name: 'Caipiroska de limão',
-    },
-  ];
+  const cocktails: string[] = ['Caipirinha tradicional', 'Caipiroska'];
 
   const result = await client.$transaction(
     cocktails.map((cocktail) =>
       client.cocktail.upsert({
-        where: { name: cocktail.name },
+        where: { name: cocktail },
         update: {},
-        create: cocktail,
+        create: { name: cocktail },
       })
     )
   );
 
   const measurements = await client.measurement.findMany();
-
-  await upsertCocktailsDisposable(measurements, result);
-  await upsertCocktailsDrink(measurements, result);
-  await upsertCocktailsInput(measurements, result);
+  const measurementsHash: any = {};
+  measurements.forEach((m) => {
+    measurementsHash[m.name] = m.id;
+  });
+  await upsertCocktailsInput(measurementsHash, result);
 }

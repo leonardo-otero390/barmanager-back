@@ -8,14 +8,13 @@ datasource db {
 }
 
 model Measurement {
-  id                 Int                  @id @default(autoincrement())
-  name               String               @unique
-  category           MeasurementCategory
-  Disposable         Disposable[]
-  Input              Input[]
-  CocktailDisposable CocktailDisposable[]
-  CocktailDrink      CocktailDrink[]
-  CocktailInput      CocktailInput[]
+  id               Int                 @id @default(autoincrement())
+  name             String              @unique
+  category         MeasurementCategory
+  Disposable       Disposable[]
+  Input            Input[]
+  CocktailInput    CocktailInput[]
+  BudgetDisposable BudgetDisposable[]
 }
 
 model EventCategory {
@@ -32,8 +31,9 @@ model Budget {
   customers  Customer      @relation(fields: [customerId], references: [id])
   categories EventCategory @relation(fields: [categoryId], references: [id])
 
-  BudgetCocktail BudgetCocktail[]
-  BudgetCost     BudgetCost[]
+  BudgetCocktail   BudgetCocktail[]
+  BudgetCost       BudgetCost[]
+  BudgetDisposable BudgetDisposable[]
   @@map("budgets")
 }
 
@@ -58,30 +58,23 @@ model BudgetCocktail {
   @@map("budgets_cocktails")
 }
 
-model CocktailDisposable {
+model BudgetDisposable {
   id            Int         @id @default(autoincrement())
+  budgetId      Int
+  budgets       Budget      @relation(fields: [budgetId], references: [id])
   disposableId  Int
-  cocktailId    Int
+  disposables   Disposable  @relation(fields: [disposableId], references: [id])
   quantity      Int
   measurementId Int
-  measurements  Measurement @relation(fields: [measurementId], references: [id])
-  cocktails     Cocktail    @relation(fields: [cocktailId], references: [id])
-  disposable    Disposable  @relation(fields: [disposableId], references: [id])
+  measurement   Measurement @relation(fields: [measurementId], references: [id])
 
-  @@map("cocktailDisposables")
+  @@map("budgets_disposables")
 }
 
-model CocktailDrink {
-  id            Int         @id @default(autoincrement())
-  drinkId       Int
-  cocktailId    Int
-  quantity      Int
-  measurementId Int
-  measurements  Measurement @relation(fields: [measurementId], references: [id])
-  cocktails     Cocktail    @relation(fields: [cocktailId], references: [id])
-  drinks        Drink       @relation(fields: [drinkId], references: [id])
-
-  @@map("cocktailDrinks")
+model InputCategory {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  Input Input[]
 }
 
 model CocktailInput {
@@ -98,11 +91,9 @@ model CocktailInput {
 }
 
 model Cocktail {
-  id                 Int                  @id @default(autoincrement())
-  name               String               @unique @db.VarChar(255)
-  cocktailDisposable CocktailDisposable[]
-  cocktailDrinks     CocktailDrink[]
-  cocktailInputs     CocktailInput[]
+  id             Int             @id @default(autoincrement())
+  name           String          @unique @db.VarChar(255)
+  cocktailInputs CocktailInput[]
 
   BudgetCocktail BudgetCocktail[]
   @@map("cocktails")
@@ -130,33 +121,25 @@ model Customer {
 }
 
 model Disposable {
-  id                 Int                  @id @default(autoincrement())
-  name               String               @unique @db.VarChar(255)
-  price              Int
-  measurementId      Int
-  measurement        Measurement          @relation(fields: [measurementId], references: [id])
-  cocktailDisposable CocktailDisposable[]
+  id            Int         @id @default(autoincrement())
+  name          String      @unique @db.VarChar(255)
+  price         Int
+  measurementId Int
+  measurement   Measurement @relation(fields: [measurementId], references: [id])
 
+  BudgetDisposable BudgetDisposable[]
   @@map("disposables")
-}
-
-model Drink {
-  id             Int             @id @default(autoincrement())
-  name           String          @unique @db.VarChar(255)
-  price          Int
-  alcoholic      Boolean
-  cocktailDrinks CocktailDrink[]
-
-  @@map("drinks")
 }
 
 model Input {
   id             Int             @id @default(autoincrement())
   name           String          @unique @db.VarChar(255)
   price          Int
+  categoryId     Int
   measurement    Measurement     @relation(fields: [measurementId], references: [id])
   cocktailInputs CocktailInput[]
 
+  category      InputCategory @relation(fields: [categoryId], references: [id])
   measurementId Int
   @@map("inputs")
 }
