@@ -6,6 +6,8 @@ import validateToken from '../middlewares/validateToken.js';
 
 const budgetRouter = Router();
 
+budgetRouter.get('/categories', budgetController.getCategories);
+
 budgetRouter.use(validateToken);
 
 budgetRouter.post(

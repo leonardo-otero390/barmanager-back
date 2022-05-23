@@ -1,7 +1,7 @@
 import { Customer } from '@prisma/client';
 import * as cocktailService from './cocktailService.js';
 import * as budgetRepository from '../repositories/budgetRepository.js';
-import * as eventCategoryRepository from '../repositories/eventCategoryRepository.js';
+import * as eventCategoryService from '../services/eventCategoryService.js';
 import * as disposableService from './disposableService.js';
 import * as costService from './costService.js';
 import * as currencyService from './currencyService.js';
@@ -121,7 +121,7 @@ export async function create({
 }: Request) {
   const cocktailsQnt = guests * 4;
   const eachCocktailQnt = Math.ceil(cocktailsQnt / cocktails.length);
-  const category = await eventCategoryRepository.find(categoryId);
+  const category = await eventCategoryService.find(categoryId);
   if (!category) {
     throw httpErrors.notFound(
       `Não foi encontrado a categoria de id: ${categoryId}`
