@@ -29,7 +29,7 @@ export async function calculatePrices(ids: number[], quantity: number) {
         input.measurement.name,
         input.inputs.measurement.name
       );
-      price += totalQuantity * input.inputs.price;
+      price += Math.ceil(totalQuantity * input.inputs.price);
     });
 
     return {

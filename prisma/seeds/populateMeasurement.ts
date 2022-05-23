@@ -20,6 +20,7 @@ export async function upsertMeasurement() {
       name: 'milhar',
       category: 'unit',
     },
+    { name: 'centena', category: 'unit' },
     {
       name: 'unidade',
       category: 'unit',

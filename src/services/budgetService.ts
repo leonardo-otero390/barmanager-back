@@ -1,7 +1,10 @@
-import { Cost } from '@prisma/client';
+import { Cost, Disposable } from '@prisma/client';
 import * as cocktailService from './cocktailService.js';
 import * as budgetRepository from '../repositories/budgetRepository.js';
 import * as costRepository from '../repositories/costRepository.js';
+import * as disposableRepository from '../repositories/disposableRepository.js';
+import * as measurementRepository from '../repositories/measurementRepository.js';
+import * as measurementService from './measurementService.js';
 
 interface Request {
   guests: number;
@@ -12,6 +15,41 @@ interface Request {
 
 interface NeededCost extends Cost {
   quantity: number;
+}
+
+interface NeededDisposable extends Disposable {
+  quantity: number;
+}
+
+async function calculateDisposables(cocktailsQnt: number) {
+  const disposables = await disposableRepository.findMany();
+  const { id: measurementId } = await measurementRepository.findByName(
+    'unidade'
+  );
+  const neededDisposables: NeededDisposable[] = [];
+
+  disposables.forEach((disposable) => {
+    const totalQuantity = measurementService.convertUnits(
+      cocktailsQnt,
+      'unidade',
+      disposable.measurement.name
+    );
+    neededDisposables.push({
+      ...disposable,
+      quantity: cocktailsQnt,
+      measurementId,
+      price: Math.ceil(disposable.price * totalQuantity),
+    });
+  });
+
+  return neededDisposables;
+}
+
+async function insertDisposables(
+  budgetId: number,
+  disposables: NeededDisposable[]
+) {
+  await budgetRepository.createDisposables(budgetId, disposables);
 }
 
 async function calculateCosts(guests: number) {
@@ -63,7 +101,11 @@ interface Cocktail {
   price: number;
 }
 
-function buildBudget(costs: NeededCost[], cocktails: Cocktail[]) {
+function buildBudget(
+  costs: NeededCost[],
+  cocktails: Cocktail[],
+  disposables: NeededDisposable[]
+) {
   interface ListTotal {
     list: NeededCost[] | Cocktail[];
     total: number;
@@ -71,13 +113,14 @@ function buildBudget(costs: NeededCost[], cocktails: Cocktail[]) {
   const result: {
     costs: ListTotal;
     cocktails: ListTotal;
+    disposables: ListTotal;
     total: number;
   } = {
     costs: { list: [], total: 0 },
     cocktails: { list: [], total: 0 },
+    disposables: { list: [], total: 0 },
     total: 0,
   };
-
   let costTotal = 0;
   costs.forEach((cost) => {
     costTotal += cost.price;
@@ -90,7 +133,25 @@ function buildBudget(costs: NeededCost[], cocktails: Cocktail[]) {
   });
   result.cocktails = { list: cocktails, total: cocktailTotal };
 
-  result.total = costTotal + cocktailTotal;
+  let disposableTotal = 0;
+  const disposableList: {
+    name: string;
+    price: number;
+    quantity: number;
+    measurement: string;
+  }[] = [];
+  disposables.forEach((disposable) => {
+    disposableTotal += disposable.price;
+    disposableList.push({
+      name: disposable.name,
+      price: disposable.price,
+      quantity: disposable.quantity,
+      measurement: 'unidade',
+    });
+  });
+  result.disposables = { list: disposableList, total: disposableTotal };
+
+  result.total = costTotal + cocktailTotal + disposableTotal;
   return result;
 }
 
@@ -117,5 +178,8 @@ export async function create({
   const costs = await calculateCosts(guests);
   await insertCosts(costs, budget.id);
 
-  return buildBudget(costs, cocktailPrices);
+  const disposables = await calculateDisposables(cocktailsQnt);
+  await insertDisposables(budget.id, disposables);
+
+  return buildBudget(costs, cocktailPrices, disposables);
 }

@@ -1,4 +1,4 @@
-import { Budget, Cost } from '@prisma/client';
+import { Budget, Cost, Disposable } from '@prisma/client';
 import { client } from '../database.js';
 
 export async function create(data: Omit<Budget, 'id'>) {
@@ -9,6 +9,23 @@ export async function create(data: Omit<Budget, 'id'>) {
 
 interface CostNeeded extends Cost {
   quantity: number;
+}
+
+interface DisposableNeeded extends Disposable {
+  quantity: number;
+}
+
+export async function createDisposables(
+  budgetId: number,
+  disposables: DisposableNeeded[]
+) {
+  return client.$transaction(
+    disposables.map(({ id: disposableId, quantity, measurementId }) =>
+      client.budgetDisposable.create({
+        data: { disposableId, budgetId, quantity, measurementId },
+      })
+    )
+  );
 }
 
 export async function createCosts(budgetId: number, costs: CostNeeded[]) {
