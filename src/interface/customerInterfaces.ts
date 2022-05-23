@@ -6,3 +6,9 @@ export interface CustomerLogin {
   email: string;
   password: string;
 }
+
+export interface PublicCustomer {
+  name: string;
+  email: string;
+  phone: string;
+}

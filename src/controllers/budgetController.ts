@@ -8,7 +8,7 @@ export async function create(req: Request, res: Response) {
     guests,
     cocktails,
     categoryId,
-    customerId: user.id,
+    customer: user,
   });
   return res.status(201).send({ budget });
 }

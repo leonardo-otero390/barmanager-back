@@ -1,38 +1,33 @@
+import { Customer } from '@prisma/client';
 import * as cocktailService from './cocktailService.js';
 import * as budgetRepository from '../repositories/budgetRepository.js';
+import * as eventCategoryRepository from '../repositories/eventCategoryRepository.js';
 import * as disposableService from './disposableService.js';
 import * as costService from './costService.js';
+import * as currencyService from './currencyService.js';
 import { NeededCost } from '../interface/costInterfaces.js';
 import { NeededDisposable } from '../interface/disposableInterfaces.js';
+import { httpErrors } from '../errors/HttpError.js';
+import {
+  BudgetCosts,
+  FormatedBudget,
+  RawBudget,
+} from '../interface/budgetInterfaces.js';
+import { CocktailPrice as Cocktail } from '../interface/cocktailInterfaces.js';
 
 interface Request {
   guests: number;
   cocktails: number[];
-  customerId: number;
+  customer: Customer;
   categoryId: number;
 }
 
-interface Cocktail {
-  name: string;
-  quantity: number;
-  price: number;
-}
-
-function buildBudget(
+function buildBudgetCosts(
   costs: NeededCost[],
   cocktails: Cocktail[],
   disposables: NeededDisposable[]
 ) {
-  interface ListTotal {
-    list: NeededCost[] | Cocktail[];
-    total: number;
-  }
-  const result: {
-    costs: ListTotal;
-    cocktails: ListTotal;
-    disposables: ListTotal;
-    total: number;
-  } = {
+  const result: BudgetCosts = {
     costs: { list: [], total: 0 },
     cocktails: { list: [], total: 0 },
     disposables: { list: [], total: 0 },
@@ -72,14 +67,66 @@ function buildBudget(
   return result;
 }
 
+function formatCurrency(budget: RawBudget) {
+  const { budgetCosts, sellPrice, ...data } = budget;
+
+  const totalCosts = currencyService.convertToReal(budgetCosts.costs.total);
+  const totalCocktails = currencyService.convertToReal(
+    budgetCosts.cocktails.total
+  );
+  const totalDisposables = currencyService.convertToReal(
+    budgetCosts.disposables.total
+  );
+  const total = currencyService.convertToReal(budgetCosts.total);
+
+  const result: FormatedBudget = {
+    ...data,
+    budgetCosts: {
+      costs: { list: [], total: totalCosts },
+      cocktails: { list: [], total: totalCocktails },
+      disposables: { list: [], total: totalDisposables },
+      total,
+    },
+    sellPrice: currencyService.convertToReal(sellPrice),
+  };
+
+  budgetCosts.costs.list.forEach((cost) => {
+    result.budgetCosts.costs.list.push({
+      ...cost,
+      price: currencyService.convertToReal(cost.price),
+    });
+  });
+
+  budgetCosts.cocktails.list.forEach((cocktail) => {
+    result.budgetCosts.cocktails.list.push({
+      ...cocktail,
+      price: currencyService.convertToReal(cocktail.price),
+    });
+  });
+
+  budgetCosts.disposables.list.forEach((disposable) => {
+    result.budgetCosts.disposables.list.push({
+      ...disposable,
+      price: currencyService.convertToReal(disposable.price),
+    });
+  });
+  return result;
+}
+
 export async function create({
   guests,
   cocktails,
-  customerId,
+  customer,
   categoryId,
 }: Request) {
   const cocktailsQnt = guests * 4;
   const eachCocktailQnt = Math.ceil(cocktailsQnt / cocktails.length);
+  const category = await eventCategoryRepository.find(categoryId);
+  if (!category) {
+    throw httpErrors.notFound(
+      `Não foi encontrado a categoria de id: ${categoryId}`
+    );
+  }
 
   const cocktailPrices = await cocktailService.calculatePrices(
     cocktails,
@@ -88,7 +135,7 @@ export async function create({
 
   const budget = await budgetRepository.create({
     guests,
-    customerId,
+    customerId: customer.id,
     categoryId,
   });
 
@@ -100,5 +147,17 @@ export async function create({
   const disposables = await disposableService.calculate(cocktailsQnt);
   await disposableService.insertToBudget(budget.id, disposables);
 
-  return buildBudget(costs, cocktailPrices, disposables);
+  const budgetCosts = buildBudgetCosts(costs, cocktailPrices, disposables);
+
+  const sellPrice = Math.ceil(budgetCosts.total * 1.2);
+
+  const { id, password, ...publicCustomer } = customer;
+
+  return formatCurrency({
+    customer: publicCustomer,
+    category: category.name,
+    guests,
+    budgetCosts,
+    sellPrice,
+  });
 }
