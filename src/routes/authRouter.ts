@@ -6,11 +6,11 @@ import { signUp, logIn } from '../schemas/customerSchema.js';
 const authRouter = Router();
 
 authRouter.post(
-  '/sign-up',
+  '/signup',
   validateSchema(signUp, 'body'),
   authController.signUp
 );
 
-authRouter.post('/log-in', validateSchema(logIn, 'body'), authController.logIn);
+authRouter.post('/login', validateSchema(logIn, 'body'), authController.logIn);
 
 export default authRouter;

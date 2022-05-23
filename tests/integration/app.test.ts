@@ -16,7 +16,7 @@ describe('POST /sign-up', () => {
   it('should persist the customer given a valid body', async () => {
     const customer = customerFactory.generateCustomer();
 
-    const response = await supertest(app).post('/sign-up').send(customer);
+    const response = await supertest(app).post('/signup').send(customer);
     const createdUser = await client.customer.findUnique({
       where: { email: customer.email },
     });
@@ -31,7 +31,7 @@ describe('POST /log-in', () => {
     const customer = customerFactory.generateCustomer();
     await customerFactory.insertCustomer(customer);
 
-    const response = await supertest(app).post('/log-in').send({
+    const response = await supertest(app).post('/login').send({
       email: customer.email,
       password: customer.password,
     });

@@ -41,6 +41,7 @@ model BudgetCost {
   id       Int    @id @default(autoincrement())
   budgetId Int
   costId   Int
+  quantity Int
   budgets  Budget @relation(fields: [budgetId], references: [id])
   costs    Cost   @relation(fields: [costId], references: [id])
 
@@ -83,7 +84,7 @@ model CocktailInput {
   cocktailId    Int
   quantity      Int
   measurementId Int
-  measurement  Measurement @relation(fields: [measurementId], references: [id])
+  measurement   Measurement @relation(fields: [measurementId], references: [id])
   cocktails     Cocktail    @relation(fields: [cocktailId], references: [id])
   inputs        Input       @relation(fields: [inputId], references: [id])
 
