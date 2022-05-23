@@ -81,5 +81,8 @@ export async function upsertCocktails() {
   measurements.forEach((m) => {
     measurementsHash[m.name] = m.id;
   });
-  await upsertCocktailsInput(measurementsHash, result);
+  const recipes = await client.cocktailInput.findMany();
+  if (!recipes.length) {
+    await upsertCocktailsInput(measurementsHash, result);
+  }
 }
