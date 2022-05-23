@@ -1,6 +1,8 @@
 import { httpErrors } from '../errors/HttpError.js';
+import { NeededCocktail } from '../interface/cocktailInterfaces.js';
 import * as cocktailRepository from '../repositories/cocktailRepository.js';
 import * as measurementService from '../services/measurementService.js';
+import * as budgetRepository from '../repositories/budgetRepository.js';
 
 export async function findMany() {
   return cocktailRepository.findMany();
@@ -33,9 +35,17 @@ export async function calculatePrices(ids: number[], quantity: number) {
     });
 
     return {
+      id: cocktail.id,
       name: cocktail.name,
       quantity,
       price,
     };
   });
+}
+
+export async function insertToBudget(
+  budgetId: number,
+  cocktails: NeededCocktail[]
+) {
+  await budgetRepository.createCocktails(budgetId, cocktails);
 }

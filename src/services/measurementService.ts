@@ -1,3 +1,5 @@
+import * as measurementRepository from '../repositories/measurementRepository.js';
+
 export function convertUnits(
   value: number,
   fromUnit: string,
@@ -14,4 +16,8 @@ export function convertUnits(
     return value / 100;
   }
   return 0;
+}
+
+export async function findByName(name: string) {
+  return measurementRepository.findByName(name);
 }
