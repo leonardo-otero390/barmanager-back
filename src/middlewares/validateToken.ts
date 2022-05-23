@@ -22,10 +22,10 @@ export default async function validateToken(
   }
 
   try {
-    const { userId } = jwt.verify(token, process.env.JWT_SECRET) as {
-      userId: number;
+    const { customerId } = jwt.verify(token, process.env.JWT_SECRET) as {
+      customerId: number;
     };
-    const user = await customerService.findById(userId);
+    const user = await customerService.findById(customerId);
     res.locals.user = user;
 
     next();

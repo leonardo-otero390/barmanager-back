@@ -83,7 +83,7 @@ model CocktailInput {
   cocktailId    Int
   quantity      Int
   measurementId Int
-  measurements  Measurement @relation(fields: [measurementId], references: [id])
+  measurement  Measurement @relation(fields: [measurementId], references: [id])
   cocktails     Cocktail    @relation(fields: [cocktailId], references: [id])
   inputs        Input       @relation(fields: [inputId], references: [id])
 
