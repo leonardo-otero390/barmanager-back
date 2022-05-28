@@ -16,6 +16,8 @@ Features
 
 - [ ] Send email to company.
 
+<img src="./dbDesign.png" />
+
 ## Endpoints
 
 <details>
