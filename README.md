@@ -34,10 +34,10 @@ Features
 
 ```json
 {
-    "name":"joe",
-    "email":"joe@mail.com",
-    "phone":"12345678911", //11 number digits
-    "password":"123"
+  "name": "joe",
+  "email": "joe@mail.com",
+  "phone": "12345678911", //11 number digits
+  "password": "123"
 }
 ```
 
@@ -75,7 +75,52 @@ and
 
  </details>
 
+ <details>
+            <summary>
+                <strong>GET</strong> /cocktails
+            </summary>
 
+- it returns status <strong>200</strong> for succes
+
+and
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Caipirinha"
+  },
+  {
+    "id": 2,
+    "name": "Caipiroska"
+  }
+]
+```
+ </details>
+
+ <details>
+            <summary>
+                <strong>GET</strong> /budgets/categories
+            </summary>
+
+- it returns status <strong>200</strong> for succes
+
+and
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Birthday"
+  },
+  {
+    "id": 2,
+    "name": "Wedding"
+  }
+]
+```
+ </details>
+ 
 ## Technologies
 
 <div style="display: flex; gap: 10px; height: 40px;">
