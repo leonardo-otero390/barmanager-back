@@ -1,16 +1,18 @@
-## APPName
+## BARMANANager
 
-Short description.
+BARMANager is a proposal generator based on the client's needs, with the information passed it calculates the expenses and sends it to the company's email.
 
 Features
 
-- [x] Feature 1
+- [x] Auth
 
-- [x] Feature 2
+- [x] Get events category
 
-#### BONUS
+- [x] Get cocktails
 
-- [ ] BONUS
+- [x] Post new budget
+
+- [ ] Send email to company.
 
 ## Endpoints
 
