@@ -120,7 +120,59 @@ and
 ]
 ```
  </details>
- 
+
+
+### All following needs token authorization
+
+<details>
+    <summary>
+        <strong >Authorization</strong>
+    </summary>
+- send a Bearer token on headers like this:
+
+```json
+{
+  "headers": {
+    "authorization": "Bearer 1cf7cccf-48ad-4edd-8b9d-121b1199aaf4"
+  }
+}
+```
+
+- it returns <strong>400</strong> for empty auth or without Bearer
+
+- it returns <strong>401</strong> for unauthorized
+
+</details>
+
+ <details>
+            <summary>
+                <strong>POST</strong> /budgets
+            </summary>
+
+        send body request like this:
+
+```json
+{
+    "guests": 100,
+    "categoryId": 1, // budget category
+    "cocktails": [1,2] // array of cocktails ids
+}
+```
+
+- it returns status <strong>201</strong> for succes
+
+and
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjUwNjQ5NzgxfQ.Uh1NxvzX-4XHvZOGdsEkCWk-KJTuNFNU8U-5dP59XFw"
+}
+```
+
+- it return status <strong>401</strong> for incorrect password or email
+
+ </details>
+
 ## Technologies
 
 <div style="display: flex; gap: 10px; height: 40px;">
