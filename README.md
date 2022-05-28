@@ -2,6 +2,8 @@
 
 BARMANager is a proposal generator based on the client's needs, with the information passed it calculates the expenses and sends it to the company's email.
 
+You can check the [front-end repo](https://github.com/leonardo-otero390/barmanager-front) or [deployed version](http://barmanager-front.vercel.app/)
+
 Features
 
 - [x] Auth
@@ -96,6 +98,7 @@ and
   }
 ]
 ```
+
  </details>
 
  <details>
@@ -119,8 +122,8 @@ and
   }
 ]
 ```
- </details>
 
+ </details>
 
 ### All following needs token authorization
 
@@ -153,9 +156,9 @@ and
 
 ```json
 {
-    "guests": 100,
-    "categoryId": 1, // budget category
-    "cocktails": [1,2] // array of cocktails ids
+  "guests": 100,
+  "categoryId": 1, // budget category
+  "cocktails": [1, 2] // array of cocktails ids
 }
 ```
 
