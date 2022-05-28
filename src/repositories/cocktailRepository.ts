@@ -5,7 +5,7 @@ export async function findMany() {
 }
 
 export async function findRecipes(ids: number[]) {
-  return client.cocktail.findMany({
+  const result = await client.cocktail.findMany({
     where: { id: { in: ids } },
     include: {
       cocktailInputs: {
@@ -23,4 +23,6 @@ export async function findRecipes(ids: number[]) {
       },
     },
   });
+
+  return result;
 }

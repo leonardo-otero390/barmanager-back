@@ -13,3 +13,19 @@ export interface CocktailPrice {
 export interface FormatedCocktailPrice extends Omit<CocktailPrice, 'price'> {
   price: string;
 }
+
+export type CocktailWithInputs = Cocktail & {
+  cocktailInputs: {
+    quantity: number;
+    measurement: {
+      name: string;
+    };
+    inputs: {
+      price: number;
+      name: string;
+      measurement: {
+        name: string;
+      };
+    };
+  }[];
+};

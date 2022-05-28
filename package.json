@@ -9,8 +9,8 @@
     "start": "npx ts-node src/server.ts",
     "dev": "nodemon src/server.ts",
     "test": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test jest -i",
-    "migrate:seed": "npx prisma migrate dev && npx prisma db seed",
-    "migrate:test": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test npx prisma migrate dev && npm run test"
+    "seed": "npx prisma db seed",
+    "migrate:start": "npx prisma migrate deploy && npm run seed && npm start"
   },
   "prisma": {
     "seed": "ts-node prisma/seeds/index.ts"
