@@ -23,6 +23,59 @@ Features
 
 - it returns status <strong>200</strong> for succes
 
+</details>
+
+<details>
+            <summary>
+                <strong>POST</strong> /signup
+            </summary>
+
+        send body request like this:
+
+```json
+{
+    "name":"joe",
+    "email":"joe@mail.com",
+    "phone":"12345678911", //11 number digits
+    "password":"123"
+}
+```
+
+- it returns status <strong>201</strong> for success
+
+- it return status <strong>409</strong> if email is already in use
+
+ </details>
+
+ <details>
+            <summary>
+                <strong>POST</strong> /login
+            </summary>
+
+        send body request like this:
+
+```json
+{
+  "email": "joe@mail.com",
+  "password": "123"
+}
+```
+
+- it returns status <strong>200</strong> for succes
+
+and
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjUwNjQ5NzgxfQ.Uh1NxvzX-4XHvZOGdsEkCWk-KJTuNFNU8U-5dP59XFw"
+}
+```
+
+- it return status <strong>401</strong> for incorrect password or email
+
+ </details>
+
+
 ## Technologies
 
 <div style="display: flex; gap: 10px; height: 40px;">
