@@ -67,7 +67,7 @@ function buildBudgetCosts(
   return result;
 }
 
-function formatCurrency(budget: RawBudget) {
+export function formatCurrency(budget: RawBudget) {
   const { budgetCosts, sellPrice, ...data } = budget;
 
   const totalCosts = currencyService.convertToReal(budgetCosts.costs.total);
@@ -153,11 +153,11 @@ export async function create({
 
   const { id, password, ...publicCustomer } = customer;
 
-  return formatCurrency({
+  return {
     customer: publicCustomer,
     category: category.name,
     guests,
     budgetCosts,
     sellPrice,
-  });
+  };
 }

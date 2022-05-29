@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as budgetService from '../services/budgetService.js';
 import * as eventCategoryService from '../services/eventCategoryService.js';
+import * as emailService from '../services/emailService.js';
 
 export async function create(req: Request, res: Response) {
   const { guests, cocktails, categoryId } = req.body;
@@ -11,7 +12,8 @@ export async function create(req: Request, res: Response) {
     categoryId,
     customer: user,
   });
-  return res.status(201).send(budget);
+  await emailService.sendBudget(budget);
+  return res.sendStatus(201);
 }
 
 export async function getCategories(req: Request, res: Response) {
