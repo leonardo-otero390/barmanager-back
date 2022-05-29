@@ -18,33 +18,37 @@ function buildBudgetMsg(budget: RawBudget) {
   ) {
     let result = '';
     costs.forEach((cost) => {
-      result += `${cost.quantity} ${cost.name} - $${cost.price}\n`;
+      result += `${cost.quantity} ${cost.name} - ${cost.price}<br>`;
     });
     return result;
   }
   const { category, customer, guests, budgetCosts, sellPrice } =
     budgetService.formatCurrency(budget);
 
-  const title = `New ${category} budget request for ${guests} guests`;
+  const title = `<h2><strong>New ${category} budget request for ${guests} guests</strong></h2>`;
   const customerInfos = `
-    Name: ${customer.name}
-    Email: ${customer.email}
-    Phone: ${customer.phone}`;
+  <p>
+    Name: ${customer.name}<br>
+    Email: ${customer.email}<br>
+    Phone: ${customer.phone}<br>
+</p>`;
   const { costs, cocktails, disposables } = budgetCosts;
   const costsText = `
-    Costs: 
+  <div style="margin:16px;">
+    Costs:<br>
       ${buildCostList(costs.list)}
-      total: ${costs.total};
-    Cocktails:
+      total: ${costs.total};<br>
+    <br>Cocktails:<br>
       ${buildCostList(cocktails.list)}
-      total: ${cocktails.total};
-    Disposables:
+      total: ${cocktails.total};<br>
+    <br>Disposables:<br>
       ${buildCostList(disposables.list)}
-      total: ${disposables.total};
+      total: ${disposables.total};<br>
+    </div>
       `;
-  const suggestedPrice = `Total suggested price: ${sellPrice}`;
+  const suggestedPrice = `<h4><strong>Total suggested price: ${sellPrice}</strong></h4>`;
 
-  return `${title}\nCustomer infos:${customerInfos}\n${costsText}\n${suggestedPrice}`;
+  return `${title}<hr><h4>Customer infos:</h4>${customerInfos}<hr>${suggestedPrice}<hr>${costsText}`;
 }
 
 export async function send({ email, msg, subject }: Mail) {
@@ -52,7 +56,7 @@ export async function send({ email, msg, subject }: Mail) {
     to: email,
     from: process.env.SENDGRID_FROM_EMAIL,
     subject,
-    text: msg,
+    html: msg,
   };
   await sgMail.send(structure);
 }
