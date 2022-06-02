@@ -14,7 +14,7 @@ Features
 
 - [x] Post new budget
 
-- [ ] Send email to company.
+- [x] Send email with budget.
 
 <img src="./dbDesign.png" />
 
