@@ -8,7 +8,7 @@
     "prebuild": "rm -rf dist && npm run generate:migrate ",
     "build": "tsc",
     "lint": "eslint . --ext .ts",
-    "start": "npx ts-node src/server.ts",
+    "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
     "test": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test jest -i",
     "seed": "npx prisma db seed",
