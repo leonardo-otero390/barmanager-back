@@ -5,12 +5,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prebuild": "rm -rf dist && npm run generate:migrate ",
+    "build": "tsc",
     "lint": "eslint . --ext .ts",
     "start": "npx ts-node src/server.ts",
     "dev": "nodemon src/server.ts",
     "test": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test jest -i",
     "seed": "npx prisma db seed",
-    "migrate:start": "npx prisma migrate deploy && npm run seed && npm start"
+    "migrate:seed": "npx prisma migrate deploy && npm run seed",
+    "generate:migrate": "npx prisma generate && npm run migrate:seed",
+    "migrate:start": "npm run migrate:seed && npm start"
   },
   "prisma": {
     "seed": "ts-node prisma/seeds/index.ts"
