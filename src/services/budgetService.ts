@@ -124,7 +124,7 @@ export async function create({
   const category = await eventCategoryService.find(categoryId);
   if (!category) {
     throw httpErrors.notFound(
-      `Não foi encontrado a categoria de id: ${categoryId}`
+      `Can't find event category id: ${categoryId}`
     );
   }
 

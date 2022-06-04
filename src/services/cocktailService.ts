@@ -13,7 +13,7 @@ export async function findRecipes(ids: number[]) {
   const missing = ids.filter((id) => !result.find((r) => r.id === id));
   if (missing.length) {
     throw httpErrors.notFound(
-      `Não foi encontrado o cocktail de id: ${missing.join(', ')}`
+      `Can't find cocktail id: ${missing.join(', ')}`
     );
   }
   return result;

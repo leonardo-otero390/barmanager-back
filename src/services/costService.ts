@@ -18,17 +18,14 @@ export async function calculate(guests: number) {
         price: cost.price * bartenderQuantity,
       };
     }
-    if (cost.name === 'Capitão') {
+    if (cost.name === 'Bartender leader') {
       toPush = {
         ...cost,
         quantity: captainQuantity,
         price: cost.price * captainQuantity,
       };
     }
-    if (
-      cost.name === 'Lavanderia' ||
-      cost.name === 'Depreciação de equipamento'
-    ) {
+    if (cost.name === 'Laundry' || cost.name === 'Equipment depreciation') {
       toPush = {
         ...cost,
         quantity: bartenderQuantity + captainQuantity,

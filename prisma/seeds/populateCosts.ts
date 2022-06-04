@@ -3,21 +3,21 @@ import { client } from '../../src/database.js';
 
 export async function upsertCosts() {
   const costs: Omit<Cost, 'id'>[] = [
-    { name: 'Capitão', price: 35000, category: 'staff' },
+    { name: 'Bartender leader', price: 35000, category: 'staff' },
     {
       name: 'Bartender',
       price: 14000,
       category: 'staff',
     },
-    { name: 'Montagem', price: 6000, category: 'staff' },
-    { name: 'Transporte', price: 5000, category: 'variable' },
-    { name: 'Lavanderia', price: 1000, category: 'operationals' },
+    { name: 'Installation', price: 6000, category: 'staff' },
+    { name: 'Transport', price: 5000, category: 'variable' },
+    { name: 'Laundry', price: 1000, category: 'operationals' },
     {
-      name: 'Depreciação de equipamento',
+      name: 'Equipment depreciation',
       price: 1000,
       category: 'operationals',
     },
-    { name: 'Mobiliário', price: 16000, category: 'operationals' },
+    { name: 'Furniture', price: 16000, category: 'operationals' },
   ];
   await client.$transaction(
     costs.map((cost) =>

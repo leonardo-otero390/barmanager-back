@@ -3,17 +3,17 @@ import { client } from '../../src/database.js';
 
 export async function upsertDisposables() {
   const measurements = await client.measurement.findMany();
-  const centenaId = measurements.find((m) => m.name === 'centena').id;
+  const hundredId = measurements.find((m) => m.name === 'hundred').id;
   const disposables: Omit<Disposable, 'id'>[] = [
     {
-      name: 'centena',
+      name: 'Straw',
       price: 2000,
-      measurementId: centenaId,
+      measurementId: hundredId,
     },
     {
-      name: 'Guardanapo',
+      name: 'Napkin',
       price: 500,
-      measurementId: centenaId,
+      measurementId: hundredId,
     },
   ];
 

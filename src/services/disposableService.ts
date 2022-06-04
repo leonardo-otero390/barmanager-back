@@ -5,13 +5,13 @@ import * as measurementService from './measurementService.js';
 
 export async function calculate(cocktailsQnt: number) {
   const disposables = await disposableRepository.findMany();
-  const { id: measurementId } = await measurementService.findByName('unidade');
+  const { id: measurementId } = await measurementService.findByName('unity');
   const neededDisposables: NeededDisposable[] = [];
 
   disposables.forEach((disposable) => {
     const totalQuantity = measurementService.convertUnits(
       cocktailsQnt,
-      'unidade',
+      'unity',
       disposable.measurement.name
     );
     neededDisposables.push({

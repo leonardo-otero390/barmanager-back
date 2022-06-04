@@ -4,12 +4,12 @@ import { client } from '../../src/database.js';
 async function upsertInputCategory() {
   const categories: Omit<InputCategory, 'id'>[] = [
     {
-      name: 'Bebidas',
+      name: 'Drinks',
     },
     {
-      name: 'Frutas',
+      name: 'Fruits',
     },
-    { name: 'Insumos' },
+    { name: 'Inputs' },
   ];
 
   return client.$transaction(
@@ -25,13 +25,13 @@ async function upsertInputCategory() {
 
 export async function upsertInputs() {
   const categories = await upsertInputCategory();
-  const drinkCategory = categories.find((c) => c.name === 'Bebidas');
-  const fruitCategory = categories.find((c) => c.name === 'Frutas');
-  const ingredientCategory = categories.find((c) => c.name === 'Insumos');
+  const drinkCategory = categories.find((c) => c.name === 'Drinks');
+  const fruitCategory = categories.find((c) => c.name === 'Fruits');
+  const ingredientCategory = categories.find((c) => c.name === 'Inputs');
 
   const measurements = await client.measurement.findMany();
-  const literId = measurements.find((m) => m.name === 'litro').id;
-  const kilogramId = measurements.find((m) => m.name === 'kilograma').id;
+  const literId = measurements.find((m) => m.name === 'liter').id;
+  const kilogramId = measurements.find((m) => m.name === 'kilogram').id;
   const inputs: Omit<Input, 'id'>[] = [
     {
       name: 'Cachaça',
@@ -46,19 +46,19 @@ export async function upsertInputs() {
       categoryId: drinkCategory.id,
     },
     {
-      name: 'Limão Taiti',
+      name: 'Lime',
       price: 250,
       measurementId: kilogramId,
       categoryId: fruitCategory.id,
     },
     {
-      name: 'Açucar',
+      name: 'Sugar',
       price: 623,
       measurementId: kilogramId,
       categoryId: ingredientCategory.id,
     },
     {
-      name: 'Gelo',
+      name: 'Ice',
       price: 100,
       measurementId: kilogramId,
       categoryId: ingredientCategory.id,

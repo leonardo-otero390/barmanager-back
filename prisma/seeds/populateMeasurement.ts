@@ -4,25 +4,25 @@ import { client } from '../../src/database.js';
 export async function upsertMeasurement() {
   const units: Omit<Measurement, 'id'>[] = [
     {
-      name: 'kilograma',
+      name: 'kilogram',
       category: 'mass',
     },
     {
-      name: 'grama',
+      name: 'gram',
       category: 'mass',
     },
-    { name: 'litro', category: 'volume' },
+    { name: 'liter', category: 'volume' },
     {
-      name: 'mililitro',
+      name: 'mililiter',
       category: 'volume',
     },
     {
-      name: 'milhar',
+      name: 'thousand',
       category: 'unit',
     },
-    { name: 'centena', category: 'unit' },
+    { name: 'hundred', category: 'unit' },
     {
-      name: 'unidade',
+      name: 'unity',
       category: 'unit',
     },
   ];

@@ -2,13 +2,13 @@ import { client } from '../../src/database.js';
 
 export async function upsertEventCategories() {
   const categories: string[] = [
-    'Aniversário',
-    'Casamento',
-    'Corporativo',
+    'Birthday',
+    'Wedding',
+    'Corporative',
     'Debutante',
-    'Festa',
-    'Formatura',
-    'Outros',
+    'Party',
+    'Graduation',
+    'Other',
   ];
   await client.$transaction(
     categories.map((category) =>

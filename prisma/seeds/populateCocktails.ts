@@ -13,21 +13,21 @@ export async function buildRecipes(
     const newItems: Omit<CocktailInput, 'id'>[] = [
       {
         cocktailId: cocktail.id,
-        inputId: inputs['Açucar'],
+        inputId: inputs.Sugar,
         quantity: 30,
-        measurementId: measurements.grama,
+        measurementId: measurements.gram,
       },
       {
         cocktailId: cocktail.id,
-        inputId: inputs['Limão Taiti'],
+        inputId: inputs.Lime,
         quantity: 100,
-        measurementId: measurements.grama,
+        measurementId: measurements.gram,
       },
       {
         cocktailId: cocktail.id,
-        inputId: inputs.Gelo,
+        inputId: inputs.Ice,
         quantity: 300,
-        measurementId: measurements.grama,
+        measurementId: measurements.gram,
       },
     ];
     recipesInputs.push(...newItems);
@@ -35,16 +35,16 @@ export async function buildRecipes(
 
   recipesInputs.push(
     {
-      cocktailId: cocktails.find((c) => c.name === 'Caipirinha tradicional').id,
+      cocktailId: cocktails.find((c) => c.name === 'Caipirinha').id,
       inputId: inputs['Cachaça'],
       quantity: 50,
-      measurementId: measurements.mililitro,
+      measurementId: measurements.mililiter,
     },
     {
       cocktailId: cocktails.find((c) => c.name === 'Caipiroska').id,
       inputId: inputs.Vodka,
       quantity: 50,
-      measurementId: measurements.mililitro,
+      measurementId: measurements.mililiter,
     }
   );
   await client.cocktailInput.createMany({ data: recipesInputs });
@@ -64,7 +64,7 @@ export async function upsertCocktailsInput(
 }
 
 export async function upsertCocktails() {
-  const cocktails: string[] = ['Caipirinha tradicional', 'Caipiroska'];
+  const cocktails: string[] = ['Caipirinha', 'Caipiroska'];
 
   const result = await client.$transaction(
     cocktails.map((cocktail) =>
